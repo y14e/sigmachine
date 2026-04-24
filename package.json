@@ -1,5 +1,5 @@
 {
-  "name": "sigg",
+  "name": "sig8",
   "version": "0.0.1",
   "description": "High-performance async machinery powered by AbortSignal",
   "type": "module",
@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/y14e/sigg.git"
+    "url": "git+https://github.com/y14e/sig8.git"
   },
   "bugs": {
-    "url": "https://github.com/y14e/sigg/issues"
+    "url": "https://github.com/y14e/sig8/issues"
   },
-  "homepage": "https://github.com/y14e/sigg#readme",
+  "homepage": "https://github.com/y14e/sig8#readme",
   "devDependencies": {
     "bun-types": "latest",
     "tsup": "^8.0.0",
