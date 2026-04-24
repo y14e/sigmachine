@@ -154,7 +154,7 @@ interface RetryOptions {
 
   maxTotalTime?: number;   // Maximum total retry time in ms
 
-  retryOnError?: (error: unknown) => boolean;
+  shouldRetry?: (error: unknown) => boolean;
   retryOnResult?: (result: unknown) => boolean;
 
   onRetry?: (context: RetryContext) => void;
