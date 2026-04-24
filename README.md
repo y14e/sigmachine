@@ -1,4 +1,4 @@
-# sigggnal
+# Sigggnal
 
 High-performance async machinery powered by `AbortSignal`. Supports cancellation, timeouts, retries, and concurrency control.
 
@@ -247,7 +247,7 @@ const fn = memo((x) => x * 2);
 
 ## Comparison
 
-| Feature        | sigggnal | p-limit | RxJS       |
+| Feature        | Sigggnal | p-limit | RxJS       |
 | -------------- | ---------- | ------- | ---------- |
 | AbortSignal    | ✅ Native   | ❌       | ❌ (custom) |
 | Retry          | ✅          | ❌       | ⚠️         |
