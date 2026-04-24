@@ -1,5 +1,5 @@
 {
-  "name": "sigm",
+  "name": "signal-machine",
   "version": "0.0.1",
   "description": "High-performance async machinery powered by AbortSignal",
   "type": "module",
@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/y14e/sigm.git"
+    "url": "git+https://github.com/y14e/signal-machine.git"
   },
   "bugs": {
-    "url": "https://github.com/y14e/sigm/issues"
+    "url": "https://github.com/y14e/signal-machine/issues"
   },
-  "homepage": "https://github.com/y14e/sigm#readme",
+  "homepage": "https://github.com/y14e/signal-machine#readme",
   "devDependencies": {
     "bun-types": "latest",
     "tsup": "^8.0.0",
