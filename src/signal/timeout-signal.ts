@@ -1,3 +1,5 @@
+import { getAbortReason } from '../internal';
+
 export function timeoutSignal(
   timeout: number,
   signal?: AbortSignal,
@@ -6,7 +8,7 @@ export function timeoutSignal(
   const { signal: own } = controller;
 
   if (signal?.aborted) {
-    controller.abort(signal.reason);
+    controller.abort(getAbortReason(signal));
     return own;
   }
 
@@ -23,14 +25,19 @@ export function timeoutSignal(
 
   const onAbort = () => {
     cleanup();
-    controller.abort(signal?.reason);
+    controller.abort(getAbortReason(signal));
   };
 
   signal?.addEventListener('abort', onAbort, { once: true });
   own.addEventListener('abort', cleanup, { once: true });
 
   timer = setTimeout(() => {
-    controller.abort(new DOMException(`Timeout ${timeout}ms.`, 'TimeoutError'));
+    controller.abort(
+      new DOMException(
+        `The operation timed out (${timeout}ms)`,
+        'TimeoutError',
+      ),
+    );
   }, timeout);
 
   return own;

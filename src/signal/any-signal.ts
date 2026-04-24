@@ -1,14 +1,16 @@
+import { getAbortReason } from '../internal';
+
 export function anySignal(
   ...signals: (AbortSignal | null | undefined)[]
 ): AbortSignal {
   const sources = signals.filter((signal): signal is AbortSignal => {
-    return signal instanceof AbortSignal;
+    return typeof signal === 'object' && signal !== null && 'aborted' in signal;
   });
 
   const controller = new AbortController();
 
   if (sources.length === 0) {
-    controller.abort();
+    controller.abort(new DOMException('Aborted', 'AbortError'));
     return controller.signal;
   }
 
@@ -32,7 +34,7 @@ export function anySignal(
 
   const onAbort = (event: Event) => {
     cleanup();
-    controller.abort((event.currentTarget as AbortSignal).reason);
+    controller.abort(getAbortReason(event.currentTarget as AbortSignal));
   };
 
   result.addEventListener('abort', cleanup, { once: true });
@@ -40,7 +42,7 @@ export function anySignal(
   for (const source of sources) {
     if (source.aborted) {
       cleanup();
-      controller.abort(source.reason);
+      controller.abort(getAbortReason(source));
       return result;
     }
 

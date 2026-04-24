@@ -1,25 +1,29 @@
 import { createLimiter } from './limiter';
 
 export const createQueue = ({ concurrent = 1 } = {}) => {
-  const limit = createLimiter(concurrent);
   let pending = 0;
-  let resolveIdle: (() => void) | undefined;
+  let idleResolvers: (() => void)[] = [];
 
   const checkIdle = () => {
-    if (pending !== 0 || !resolveIdle) {
+    if (pending !== 0 || idleResolvers.length === 0) {
       return;
     }
 
-    const r = resolveIdle;
-    resolveIdle = undefined;
-    r();
+    const resolvers = idleResolvers;
+    idleResolvers = [];
+
+    for (const resolver of resolvers) {
+      resolver();
+    }
   };
 
+  const limiter = createLimiter(concurrent);
+
   return {
-    add<T>(task: () => Promise<T>) {
-      pending += 1;
-      return limit(task).finally(() => {
-        pending -= 1;
+    async add<T>(task: () => Promise<T>) {
+      pending++;
+      return limiter(() => Promise.resolve().then(task)).finally(() => {
+        pending--;
         checkIdle();
       });
     },
@@ -29,7 +33,7 @@ export const createQueue = ({ concurrent = 1 } = {}) => {
       }
 
       return new Promise<void>((resolve) => {
-        resolveIdle = resolve;
+        idleResolvers[idleResolvers.length] = resolve;
       });
     },
   };

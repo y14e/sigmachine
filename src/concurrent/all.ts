@@ -1,31 +1,33 @@
+import { run } from '../internal';
 import type { Task } from '../types';
-import { run } from './internal';
 
-export const all = async <T>(
+export async function all<T>(
   tasks: readonly Task<T>[],
   concurrent: number,
   signal?: AbortSignal,
-): Promise<T[]> => {
-  const result: T[] = new Array(tasks.length);
-  let error: unknown | undefined;
+): Promise<T[]> {
+  const results: T[] = new Array(tasks.length);
+  let firstError: unknown | undefined;
 
   await run(
     tasks,
     concurrent,
     signal,
-    (i, r) => {
-      if (r.status === 'fulfilled') {
-        result[i] = r.value as T;
-      } else if (error === undefined) {
-        error = r.reason;
+    (i, result) => {
+      if (result.status === 'fulfilled') {
+        results[i] = result.value;
+      } else if (firstError === undefined) {
+        firstError = result.reason;
       }
     },
-    () => error !== undefined,
+    () => {
+      return firstError !== undefined;
+    },
   );
 
-  if (error !== undefined) {
-    throw error;
+  if (firstError !== undefined) {
+    throw firstError;
   }
 
-  return result;
-};
+  return results;
+}

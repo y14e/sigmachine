@@ -1,9 +1,9 @@
-export function memo<Args extends unknown[], T>(
-  callback: (...args: Args) => Promise<T>,
-): (...args: Args) => Promise<T> {
-  const cache = new Map<string, Promise<T>>();
+export function memo<T extends unknown[], R>(
+  callback: (...args: T) => Promise<R>,
+): (...args: T) => Promise<R> {
+  const cache = new Map<string, Promise<R>>();
 
-  return (...args: Args) => {
+  return (...args: T) => {
     let key: string;
 
     try {
@@ -13,9 +13,14 @@ export function memo<Args extends unknown[], T>(
     }
 
     if (!cache.has(key)) {
-      cache.set(key, callback(...args));
+      const value = callback(...args);
+      cache.set(key, value);
+
+      value.catch(() => {
+        cache.delete(key);
+      });
     }
 
-    return cache.get(key) as Promise<T>;
+    return cache.get(key) as Promise<R>;
   };
 }

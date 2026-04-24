@@ -1,14 +1,12 @@
-export function once<Args extends unknown[], T>(
-  callback: (...args: Args) => Promise<T>,
-): (...args: Args) => Promise<T> {
-  let isCalled = false;
-  let result: T;
-  return async (...args: Args) => {
-    if (!isCalled) {
-      isCalled = true;
-      result = await callback(...args);
+export function once<T extends unknown[], R>(
+  callback: (...args: T) => Promise<R>,
+): (...args: T) => Promise<R> {
+  let promise: Promise<R> | undefined;
+  return (...args: T) => {
+    if (!promise) {
+      promise = callback(...args);
     }
 
-    return result;
+    return promise;
   };
 }

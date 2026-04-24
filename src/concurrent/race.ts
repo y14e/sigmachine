@@ -1,3 +1,4 @@
+import { getAbortReason } from '../internal';
 import { anySignal } from '../signal/any-signal';
 import type { Task } from '../types';
 
@@ -19,7 +20,8 @@ export const race = <T>(
       }
 
       isSettled = true;
-      const reason = signal?.reason;
+      cleanup();
+      const reason = getAbortReason(signal);
 
       for (const controller of controllers) {
         controller.abort(reason);
@@ -34,39 +36,37 @@ export const race = <T>(
 
     signal?.addEventListener('abort', onAbort, { once: true });
 
+    const settle = (callback: () => void) => {
+      if (isSettled) {
+        return;
+      }
+
+      isSettled = true;
+      cleanup();
+
+      for (const controller of controllers) {
+        controller.abort();
+      }
+
+      callback();
+    };
+
     for (const task of tasks) {
       const controller = new AbortController();
       controllers.push(controller);
       const { signal: own } = controller;
       const combined = signal ? anySignal(signal, own) : own;
+
       task(combined)
         .then((value) => {
-          if (isSettled) {
-            return;
-          }
-
-          isSettled = true;
-          cleanup();
-
-          for (const controller of controllers) {
-            controller?.abort();
-          }
-
-          resolve(value);
+          settle(() => {
+            resolve(value);
+          });
         })
         .catch((reason) => {
-          if (isSettled) {
-            return;
-          }
-
-          isSettled = true;
-          cleanup();
-
-          for (const controller of controllers) {
-            controller?.abort();
-          }
-
-          reject(reason);
+          settle(() => {
+            reject(reason);
+          });
         });
     }
   });

@@ -59,7 +59,7 @@ describe('sigggnal', () => {
       timeout(10, async (signal) => {
         await sleep(50, signal);
       }),
-    ).rejects.toThrow('Timeout');
+    ).rejects.toThrow('timed out');
   });
 
   // ---------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+import { getAbortReason } from '../internal';
 import { anySignal } from '../signal/any-signal';
 
 export function timeout<T>(
@@ -6,8 +7,15 @@ export function timeout<T>(
   signal?: AbortSignal,
 ): Promise<T> {
   if (signal?.aborted) {
-    return Promise.reject(signal.reason);
+    return Promise.reject(getAbortReason(signal));
   }
+
+  const controller = new AbortController();
+
+  const onAbort = () => {
+    cleanup();
+    controller.abort(getAbortReason(signal));
+  };
 
   let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -20,19 +28,18 @@ export function timeout<T>(
     signal?.removeEventListener('abort', onAbort);
   };
 
-  const onAbort = () => {
-    controller.abort(signal?.reason);
-  };
-
   signal?.addEventListener('abort', onAbort, { once: true });
 
-  const controller = new AbortController();
-  const { signal: own } = controller;
-
   timer = setTimeout(() => {
-    controller.abort(new DOMException(`Timeout ${timeout}ms.`, 'TimeoutError'));
+    controller.abort(
+      new DOMException(
+        `The operation timed out (${timeout}ms)`,
+        'TimeoutError',
+      ),
+    );
   }, timeout);
 
+  const { signal: own } = controller;
   const combined = signal ? anySignal(signal, own) : own;
 
   return callback(combined).finally(cleanup);

@@ -13,21 +13,21 @@ export const createLimiter = (concurrent: number) => {
       return;
     }
 
-    count += 1;
+    count++;
     job();
   };
 
   return <T>(callback: () => Promise<T>): Promise<T> =>
     new Promise((resolve, reject) => {
-      queue.push(() => {
+      queue[queue.length] = () => {
         callback()
           .then(resolve)
           .catch(reject)
           .finally(() => {
-            count -= 1;
+            count--;
             next();
           });
-      });
+      };
       next();
     });
 };

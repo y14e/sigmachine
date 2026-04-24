@@ -1,9 +1,16 @@
+import { getAbortReason } from '../internal';
+
 export function sleep(timeout: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
-      reject(signal.reason);
+      reject(getAbortReason(signal));
       return;
     }
+
+    const onAbort = () => {
+      cleanup();
+      reject(getAbortReason(signal));
+    };
 
     let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -16,11 +23,6 @@ export function sleep(timeout: number, signal?: AbortSignal): Promise<void> {
       signal?.removeEventListener('abort', onAbort);
     };
 
-    const onAbort = () => {
-      cleanup();
-      reject(signal?.reason);
-    };
-
     signal?.addEventListener('abort', onAbort, { once: true });
 
     timer = setTimeout(() => {
@@ -29,3 +31,5 @@ export function sleep(timeout: number, signal?: AbortSignal): Promise<void> {
     }, timeout);
   });
 }
+
+export const wait = sleep;

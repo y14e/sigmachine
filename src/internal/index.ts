@@ -1,6 +1,10 @@
 import { anySignal } from '../signal/any-signal';
 import type { Task } from '../types.js';
 
+export function getAbortReason(signal?: AbortSignal): unknown {
+  return signal?.reason ?? new DOMException('Aborted', 'AbortError');
+}
+
 export function run<T>(
   tasks: readonly Task<T>[],
   concurrent: number,
@@ -51,7 +55,7 @@ export function run<T>(
       'abort',
       () => {
         finished = true;
-        reject(signal.reason);
+        reject(getAbortReason(signal));
       },
       { once: true },
     );

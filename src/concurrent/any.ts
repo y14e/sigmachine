@@ -1,3 +1,4 @@
+import { getAbortReason } from '../internal';
 import { anySignal } from '../signal/any-signal';
 import type { Task } from '../types';
 
@@ -6,8 +7,12 @@ export const any = <T>(
   signal?: AbortSignal,
 ): Promise<T> => {
   return new Promise((resolve, reject) => {
+    if (tasks.length === 0) {
+      return reject(new AggregateError([], 'All promises were rejected'));
+    }
+
     if (signal?.aborted) {
-      return reject(signal.reason);
+      return reject(getAbortReason(signal));
     }
 
     let isDone = false;
@@ -19,7 +24,8 @@ export const any = <T>(
       }
 
       isDone = true;
-      const reason = signal?.reason;
+      cleanup();
+      const reason = getAbortReason(signal);
 
       for (const controller of controllers) {
         controller.abort(reason);
@@ -33,44 +39,46 @@ export const any = <T>(
     };
 
     signal?.addEventListener('abort', onAbort, { once: true });
-
     const errors: unknown[] = [];
     let rejected = 0;
 
-    tasks.forEach((task, i) => {
+    const settle = (callback: () => void) => {
+      if (isDone) {
+        return;
+      }
+
+      isDone = true;
+      cleanup();
+
+      for (const controller of controllers) {
+        controller.abort();
+      }
+
+      callback();
+    };
+
+    for (const task of tasks) {
       const controller = new AbortController();
-      controllers[i] = controller;
+      controllers[controllers.length] = controller;
       const { signal: own } = controller;
       const combined = signal ? anySignal(signal, own) : own;
 
       task(combined)
         .then((value) => {
-          if (!isDone) {
-            isDone = true;
-            cleanup();
-
-            for (const controller of controllers) {
-              controller.abort();
-            }
-
+          settle(() => {
             resolve(value);
-          }
+          });
         })
         .catch((reason) => {
-          errors[i] = reason;
+          errors[errors.length] = reason;
           rejected++;
 
-          if (rejected === tasks.length && !isDone) {
-            isDone = true;
-            cleanup();
-
-            for (const controller of controllers) {
-              controller.abort();
-            }
-
-            reject(new AggregateError(errors, 'All promises were rejected.'));
+          if (rejected === tasks.length) {
+            settle(() => {
+              reject(new AggregateError(errors, 'All promises were rejected'));
+            });
           }
         });
-    });
+    }
   });
 };
