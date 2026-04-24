@@ -1,4 +1,4 @@
-# asig
+# sigg
 
 High-performance async machinery powered by `AbortSignal`. Supports cancellation, timeouts, retries, and concurrency control.
 
@@ -15,7 +15,7 @@ High-performance async machinery powered by `AbortSignal`. Supports cancellation
 ## Installation
 
 ```bash
-npm i asig
+npm i sigg
 ```
 
 ## Philosophy
@@ -33,7 +33,7 @@ Instead of inventing new abstractions, everything is:
 ### Cancellation
 
 ```ts
-import { sleep } from 'asig';
+import { sleep } from 'sigg';
 
 const controller = new AbortController();
 
@@ -45,7 +45,7 @@ await sleep(3000, controller.signal); // throws
 ### Timeout
 
 ```ts
-import { timeout } from 'asig';
+import { timeout } from 'sigg';
 
 const result = await timeout(1000, async (signal) => {
   const res = await fetch('/api', { signal });
@@ -56,7 +56,7 @@ const result = await timeout(1000, async (signal) => {
 ### Retry
 
 ```ts
-import { retry } from 'asig';
+import { retry } from 'sigg';
 
 const result = await retry(async (signal) => {
   const res = await fetch('/api', { signal });
@@ -72,7 +72,7 @@ const result = await retry(async (signal) => {
 ### `all` (with limit)
 
 ```ts
-import { all } from 'asig';
+import { all } from 'sigg';
 
 await all([
   (s) => fetch('/a', { signal: s }),
@@ -83,7 +83,7 @@ await all([
 ### `map`
 
 ```ts
-import { map, sleep } from 'asig';
+import { map, sleep } from 'sigg';
 
 const result = await map(
   [1, 2, 3],
@@ -98,7 +98,7 @@ const result = await map(
 ### `race`
 
 ```ts
-import { race } from 'asig';
+import { race } from 'sigg';
 
 const result = await race([
   (s) => fetch('/fast', { signal: s }),
@@ -109,7 +109,7 @@ const result = await race([
 ### `any`
 
 ```ts
-import { any } from 'asig';
+import { any } from 'sigg';
 
 const result = await any([
   (s) => fetch('/a', { signal: s }),
@@ -122,7 +122,7 @@ const result = await any([
 ### Limiter
 
 ```ts
-import { createLimiter } from 'asig';
+import { createLimiter } from 'sigg';
 
 const limit = createLimiter(2);
 
@@ -135,7 +135,7 @@ await Promise.all([
 ### Queue
 
 ```ts
-import { createQueue } from 'asig';
+import { createQueue } from 'sigg';
 
 const queue = createQueue({ concurrent: 2 });
 
@@ -150,7 +150,7 @@ await queue.onIdle();
 ### `debounce`
 
 ```ts
-import { debounce } from 'asig';
+import { debounce } from 'sigg';
 
 const fn = debounce(300, async (value, signal) => {
   return fetch(`/search?q=${value}`, { signal });
@@ -160,7 +160,7 @@ const fn = debounce(300, async (value, signal) => {
 ### `throttle`
 
 ```ts
-import { throttle } from 'asig';
+import { throttle } from 'sigg';
 
 const fn = throttle(1000, async (value, signal) => {
   return fetch(`/data?q=${value}`, { signal });
@@ -170,7 +170,7 @@ const fn = throttle(1000, async (value, signal) => {
 ### `latest`
 
 ```ts
-import { latest } from 'asig';
+import { latest } from 'sigg';
 
 const fn = latest(async (value, signal) => {
   return fetch(`/data?q=${value}`, { signal });
@@ -182,7 +182,7 @@ const fn = latest(async (value, signal) => {
 ### Combine signals
 
 ```ts
-import { anySignal } from 'asig';
+import { anySignal } from 'sigg';
 
 const combined = anySignal(signalA, signalB);
 ```
@@ -193,7 +193,7 @@ const combined = anySignal(signalA, signalB);
 ### Timeout signal
 
 ```ts
-import { timeoutSignal } from 'asig';
+import { timeoutSignal } from 'sigg';
 
 const signal = timeoutSignal(1000);
 ```
@@ -203,7 +203,7 @@ const signal = timeoutSignal(1000);
 ### `sleep`
 
 ```ts
-import { sleep } from 'asig';
+import { sleep } from 'sigg';
 
 await sleep(1000);
 ```
@@ -211,7 +211,7 @@ await sleep(1000);
 ### `deferred`
 
 ```ts
-import { deferred } from 'asig';
+import { deferred } from 'sigg';
 
 const d = deferred();
 
@@ -223,7 +223,7 @@ await d.promise;
 ### `once`
 
 ```ts
-import { once } from 'asig';
+import { once } from 'sigg';
 
 const fn = once(async () => {
   console.log('called once');
@@ -233,7 +233,7 @@ const fn = once(async () => {
 ### `memo`
 
 ```ts
-import { memo } from 'asig';
+import { memo } from 'sigg';
 
 const fn = memo((x) => x * 2);
 ```
@@ -247,7 +247,7 @@ const fn = memo((x) => x * 2);
 
 ## Comparison
 
-| Feature        | asig | p-limit | RxJS       |
+| Feature        | sigg | p-limit | RxJS       |
 | -------------- | ---------- | ------- | ---------- |
 | AbortSignal    | ✅ Native   | ❌       | ❌ (custom) |
 | Retry          | ✅          | ❌       | ⚠️         |
