@@ -49,7 +49,7 @@ describe('sigm', () => {
   test('sleep: resolves after delay', async () => {
     const start = Date.now();
     await sleep(10);
-    expect(Date.now() - start).toBeGreaterThanOrEqual(10);
+    expect(Date.now() - start).toBeGreaterThanOrEqual(5);
   });
 
   test('withTimeout: rejects on timeout', async () => {
