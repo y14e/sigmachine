@@ -2,8 +2,6 @@
 
 High-performance async machinery powered by `AbortSignal`. Supports cancellation, timeouts, retries, and concurrency control.
 
-## Features
-
 * 🚀 AbortSignal-first design
 * 🔁 Retry with backoff, jitter, and conditions
 * ⏱ Timeout utilities
@@ -11,6 +9,8 @@ High-performance async machinery powered by `AbortSignal`. Supports cancellation
 * 🧠 Promise control helpers (`deferred`, `once`, `memo`)
 * 🎛 Flow control (`debounce`, `throttle`, `latest`)
 * 🧩 Composable cancellation via `anySignal`
+
+---
 
 ## Installation
 
