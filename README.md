@@ -117,6 +117,28 @@ const result = await any([
 ]);
 ```
 
+### `parallel`
+
+```ts
+import { parallel } from 'sigggnal';
+
+const result = await parallel([
+  (s) => fetch('/a', { signal: s }),
+  (s) => fetch('/b', { signal: s }),
+]);
+```
+
+### `settled`
+
+```ts
+import { settled } from 'sigggnal';
+
+const result = await settled([
+  (s) => fetch('/a', { signal: s }),
+  (s) => fetch('/b', { signal: s }),
+]);
+```
+
 ## Scheduling
 
 ### Limiter
@@ -200,7 +222,7 @@ const signal = timeoutSignal(1000);
 
 ## Utilities
 
-### `sleep`
+### `sleep` (`wait`)
 
 ```ts
 import { sleep } from 'sigggnal';
