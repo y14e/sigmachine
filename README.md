@@ -94,7 +94,7 @@ interface RetryContext {
 }
 ```
 
-Retry behavior is controlled by shouldStop(context).
+Retry behavior is controlled by `shouldStop(context)`.
 
 * `true` → stop immediately
 * `false` → continue retrying
