@@ -253,20 +253,32 @@ import { timeoutSignal } from 'sigggnal';
 
 const controller = new AbortController();
 
-await timeout(1000, async (signal) => {
-  await fetch('/api', { signal });
-}, controller.signal);
+await timeout(1000, fn, controller.signal);
 ```
 
-### Utils
+### Time
 
 #### `sleep` (`wait`)
 
 ```ts
 import { sleep } from 'sigggnal';
 
-await sleep(1000);
+const controller = new AbortController();
+
+await sleep(1000, controller.signal);
 ```
+
+#### `timeout`
+
+```ts
+import { timeout } from 'sigggnal';
+
+const controller = new AbortController();
+
+await timeout(1000, fn, signal);
+```
+
+### Utils
 
 #### `deferred`
 
