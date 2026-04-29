@@ -62,7 +62,7 @@ npm i sigggnal
 [settled](#settled)
 
 ```ts
-import { all, any, map, parallel, race, setttled } from 'sigggnal';
+import { all, any, map, parallel, race, settled } from 'sigggnal';
 ```
 
 ### all
