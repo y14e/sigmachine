@@ -95,12 +95,12 @@ any(tasks, signal);
 Maps items to async tasks with limited concurrency. Resolves with results in the same order as input.
 
 ```ts
-map(items, concurrency, callback, signal);
+map(items, concurrency, fn, signal);
 // => Promise<R[]>
 //
 // items: T[]
 // concurrency: number
-// callback: (item, index, signal) => Promise<R>
+// fn: (item, index, signal) => Promise<R>
 // signal (optional): AbortSignal
 ```
 
@@ -158,11 +158,11 @@ import { debounce, latest, throttle } from 'sigggnal';
 Debounces async calls. Only the last call is executed; previous pending calls are canceled.
 
 ```ts
-debounce(delay, callback);
+debounce(delay, fn);
 // => (value) => Promise<T>
 //
 // delay: number (ms)
-// callback: (value, signal) => Promise<T>
+// fn: (value, signal) => Promise<T>
 ```
 
 ### latest
@@ -170,10 +170,10 @@ debounce(delay, callback);
 Ensures only the latest call is active. Previous calls are canceled when a new one starts.
 
 ```ts
-latest(callback);
+latest(fn);
 // => (value) => Promise<T>
 //
-// callback: (value, signal) => Promise<T>
+// fn: (value, signal) => Promise<T>
 ```
 
 ### throttle
@@ -181,11 +181,11 @@ latest(callback);
 Throttles async calls to run at most once per interval. Supports leading and trailing execution.
 
 ```ts
-throttle(delay, callback, { leading: true, trailing: true });
+throttle(delay, fn, { leading: true, trailing: true });
 // => (value) => Promise<T>
 //
 // delay: number (ms)
-// callback: (value, signal) => Promise<T>
+// fn: (value, signal) => Promise<T>
 ```
 
 ---
@@ -197,10 +197,10 @@ import { retry } from 'sigggnal';
 ```
 
 ```ts
-retry(callback, options, signal);
+retry(fn, options, signal);
 // => Promise<T>
 //
-// callback: (signal) => Promise<T>
+// fn: (signal) => Promise<T>
 // options (optional): RetryOptions
 // signal (optional): AbortSignal
 ```
@@ -398,10 +398,10 @@ timeoutSignal(timeout, signal);
 Adapts a function to work with composed signals. Combines parent and internal signals into a single one.
 
 ```ts
-withSignal(callback);
+withSignal(fn);
 // => (...args) => (parent?) => (internal) => Promise<T>
 //
-// callback: (signal, ...args) => Promise<T>
+// fn: (signal, ...args) => Promise<T>
 ```
 
 ---
@@ -430,11 +430,11 @@ wait(1000, signal);
 ### timeout
 
 ```ts
-timeout(timeout, callback, signal);
+timeout(timeout, fn, signal);
 // => Promise<T>
 //
 // timeout: number (ms)
-// callback: (signal) => Promise<T>
+// fn: (signal) => Promise<T>
 // signal (optional): AbortSignal
 ```
 
