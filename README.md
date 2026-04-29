@@ -166,7 +166,17 @@ throttle(300, fn, { leading: true, trailing: true });
 
 ```ts
 import { retry } from 'sigggnal';
+```
 
+```ts
+retry(fn, options, signal);
+// => Promise<T>
+//
+// fn: (signal) => Promise<T>
+// options: RetryOptions
+```
+
+```ts
 const result = await retry(async (signal) => {
   const res = await fetch('/api', { signal });
   return res.json();
