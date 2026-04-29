@@ -78,7 +78,7 @@ all(tasks, 3, signal);
 
 ### any
 
-Runs tasks with limited concurrency. Resolves when all tasks succeed, or rejects on the first error.
+Resolves with the first fulfilled result. Rejects if all tasks fail.
 
 ```ts
 any(tasks, signal);
