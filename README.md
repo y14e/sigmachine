@@ -53,20 +53,19 @@ npm i sigggnal
 
 ---
 
-### Concurrency
-
-[all](#all) /
-[any](#any) /
-[map](#map) /
-[parallel](#parallel) /
-[race](#race) /
+<a id="concurrency"></a>**Concurrency** /
+[all](#all),
+[any](#any),
+[map](#map),
+[parallel](#parallel),
+[race](#race),
 [settled](#settled)
 
 ```ts
 import { all, any, map, parallel, race, setttled } from 'sigggnal';
 ```
 
-#### all
+### all
 
 Runs tasks with limited concurrency. Resolves when all tasks succeed, or rejects on the first error.
 
@@ -77,7 +76,7 @@ all(tasks, 3, signal);
 // tasks: ((signal) => Promise<T>)[]
 ```
 
-#### any
+### any
 
 Runs tasks with limited concurrency. Resolves when all tasks succeed, or rejects on the first error.
 
@@ -88,7 +87,7 @@ any(tasks, signal);
 // tasks: ((signal) => Promise<T>)[]
 ```
 
-#### map
+### map
 
 Maps items to async tasks with limited concurrency. Resolves with results in the same order as input.
 
@@ -100,7 +99,7 @@ map(items, 3, fn, signal);
 // fn: (item, index, signal) => Promise<R>
 ```
 
-#### parallel
+### parallel
 
 Runs tasks in parallel with optional concurrency control. Resolves with all fulfilled results (errors are ignored).
 
@@ -111,7 +110,7 @@ parallel(tasks, 3, signal);
 // tasks: ((signal) => Promise<T>)[]
 ```
 
-#### race
+### race
 
 Resolves or rejects as soon as one task settles. Cancels all remaining tasks.
 
@@ -122,7 +121,7 @@ race(tasks, signal);
 // tasks: ((signal) => Promise<T>)[]
 ```
 
-#### settled
+### settled
 
 Runs all tasks and collects their results. Always resolves with the outcome of each task.
 
@@ -135,17 +134,16 @@ settled(tasks, 3, signal);
 
 ---
 
-### Control
-
-[debounce](#debounce) /
-[latest](#latest) /
+<a id="control"></a>**Control** /
+[debounce](#debounce),
+[latest](#latest),
 [throttle](#throttle)
 
 ```ts
 import { debounce, latest, throttle } from 'sigggnal';
 ```
 
-#### debounce
+### debounce
 
 Debounces async calls. Only the last call is executed; previous pending calls are canceled.
 
@@ -156,7 +154,7 @@ debounce(300, fn);
 // fn: (value, signal) => Promise<T>
 ```
 
-#### latest
+### latest
 
 Ensures only the latest call is active. Previous calls are canceled when a new one starts.
 
@@ -167,7 +165,7 @@ latest(fn);
 // fn: (value, signal) => Promise<T>
 ```
 
-#### throttle
+### throttle
 
 Throttles async calls to run at most once per interval. Supports leading and trailing execution.
 
@@ -301,16 +299,15 @@ await retry(fn, {
 
 ---
 
-### Scheduler
-
-[Limiter](#limiter) /
+<a id="scheduler"></a>**Scheduler** /
+[Limiter](#limiter),
 [Queue](#queue)
 
 ```ts
 import { createLimiter, createQueue } from 'sigggnal';
 ```
 
-#### Limiter
+### Limiter
 
 ```ts
 const limit = createLimiter(2);
@@ -321,7 +318,7 @@ await Promise.all([
 ]);
 ```
 
-#### Queue
+### Queue
 
 ```ts
 const queue = createQueue({ concurrent: 2 });
@@ -334,8 +331,7 @@ await queue.onIdle();
 
 ---
 
-### Signal
-
+<a id="signal"></a>**Signal** /
 [abortable](#abortable) /
 [anySignal](#anysignal) /
 [timeoutSignal](#timeoutsignal) /
@@ -345,28 +341,28 @@ await queue.onIdle();
 import { abortable, anySignal, timeoutSignal, withSignal } from 'sigggnal';
 ```
 
-#### abortable
+### abortable
 
 ```ts
 abortable(promise, signal);
 // => Promise<T>
 ```
 
-#### anySignal
+### anySignal
 
 ```ts
 anySignal(signal1, signal2, /* ..., */ signalN);
 // => AbortSignal
 ```
 
-#### timeoutSignal
+### timeoutSignal
 
 ```ts
 timeoutSignal(1000, signal);
 // => AbortSignal
 ```
 
-#### withSignal
+### withSignal
 
 ```ts
 withSignal(fn, signal);
@@ -377,16 +373,15 @@ withSignal(fn, signal);
 
 ---
 
-### Time
-
-[sleep (wait)](#sleep-wait) /
+<a id="time"></a>**Time** /
+[sleep (wait)](#sleep-wait),
 [timeout](#timeout)
 
 ```ts
 import { sleep, timeout } from 'sigggnal';
 ```
 
-#### sleep (wait)
+### sleep (wait)
 
 ```ts
 sleep(1000, signal);
@@ -396,7 +391,7 @@ sleep(1000, signal);
 wait(1000, signal);
 ```
 
-#### timeout
+### timeout
 
 ```ts
 timeout(1000, fn, signal);
@@ -407,17 +402,16 @@ timeout(1000, fn, signal);
 
 ---
 
-### Utils
-
-[deferred](#deferred) /
-[memo](#memo) /
+<a id="utils"></a>**Utils** /
+[deferred](#deferred),
+[memo](#memo),
 [once](#once)
 
 ```ts
 import { deferred, memo, once } from 'sigggnal';
 ```
 
-#### deferred
+### deferred
 
 ```ts
 const d = deferred();
@@ -427,13 +421,13 @@ setTimeout(() => d.resolve('done'), 1000);
 await d.promise;
 ```
 
-#### memo
+### memo
 
 ```ts
 const fn = memo((x) => x * 2, { ttl: 5000 });
 ```
 
-#### once
+### once
 
 ```ts
 const fn = once(async () => {
