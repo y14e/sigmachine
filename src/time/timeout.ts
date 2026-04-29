@@ -39,6 +39,8 @@ export async function timeout<T>(
     );
   }, timeout);
 
-  const { signal: own } = controller;
-  return callback(signal ? anySignal(signal, own) : own).finally(cleanup);
+  const { signal: internalSignal } = controller;
+  return callback(
+    signal ? anySignal(signal, internalSignal) : internalSignal,
+  ).finally(cleanup);
 }

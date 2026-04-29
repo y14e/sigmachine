@@ -49,8 +49,8 @@ export function any<T>(
     tasks.forEach((task) => {
       const controller = new AbortController();
       controllers.push(controller);
-      const { signal: own } = controller;
-      const combined = signal ? anySignal(signal, own) : own;
+      const { signal: internal } = controller;
+      const combined = signal ? anySignal(signal, internal) : internal;
 
       task(combined)
         .then((value) => settle(() => resolve(value)))

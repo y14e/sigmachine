@@ -5,11 +5,11 @@ export function timeoutSignal(
   signal?: AbortSignal,
 ): AbortSignal {
   const controller = new AbortController();
-  const { signal: own } = controller;
+  const { signal: internal } = controller;
 
   if (signal?.aborted) {
     controller.abort(abortReason(signal));
-    return own;
+    return internal;
   }
 
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -29,7 +29,7 @@ export function timeoutSignal(
   };
 
   signal?.addEventListener('abort', onAbort, { once: true });
-  own.addEventListener('abort', cleanup, { once: true });
+  internal.addEventListener('abort', cleanup, { once: true });
 
   timer = setTimeout(() => {
     controller.abort(
@@ -40,5 +40,5 @@ export function timeoutSignal(
     );
   }, timeout);
 
-  return own;
+  return internal;
 }

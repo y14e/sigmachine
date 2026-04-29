@@ -23,14 +23,14 @@ export function anySignal(
     return AbortSignal.any(sources);
   }
 
-  const { signal: own } = controller;
+  const { signal: internal } = controller;
 
   const cleanup = () => {
     sources.forEach((source) => {
       source.removeEventListener('abort', onAbort);
     });
 
-    own.removeEventListener('abort', cleanup);
+    internal.removeEventListener('abort', cleanup);
   };
 
   const onAbort = (event: Event) => {
@@ -38,17 +38,17 @@ export function anySignal(
     controller.abort(abortReason(event.currentTarget as AbortSignal));
   };
 
-  own.addEventListener('abort', cleanup, { once: true });
+  internal.addEventListener('abort', cleanup, { once: true });
 
   for (const source of sources) {
     if (source.aborted) {
       cleanup();
       controller.abort(abortReason(source));
-      return own;
+      return internal;
     }
 
     source.addEventListener('abort', onAbort, { once: true });
   }
 
-  return own;
+  return internal;
 }

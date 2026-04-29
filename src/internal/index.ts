@@ -33,8 +33,8 @@ export function runWithConcurrency<T>(
         index++;
         active++;
         const controller = new AbortController();
-        const { signal: own } = controller;
-        const combined = signal ? anySignal(signal, own) : own;
+        const { signal: internal } = controller;
+        const combined = signal ? anySignal(signal, internal) : internal;
 
         (tasks[current] as Task<T>)(combined)
           .then((value: T) => {

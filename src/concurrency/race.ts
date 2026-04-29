@@ -43,9 +43,9 @@ export function race<T>(
     tasks.forEach((task) => {
       const controller = new AbortController();
       controllers.push(controller);
-      const { signal: own } = controller;
+      const { signal: internal } = controller;
 
-      task(signal ? anySignal(signal, own) : own)
+      task(signal ? anySignal(signal, internal) : internal)
         .then((value) => settle(() => resolve(value)))
         .catch((reason) => settle(() => reject(reason)));
     });
