@@ -343,12 +343,16 @@ import { abortable, anySignal, timeoutSignal, withSignal } from 'sigggnal';
 
 ### abortable
 
+Wraps a promise to make it abortable. Rejects if the signal is aborted.
+
 ```ts
 abortable(promise, signal);
 // => Promise<T>
 ```
 
 ### anySignal
+
+Combines multiple signals into one. Aborts when any of the input signals abort.
 
 ```ts
 anySignal(signal1, signal2, /* ..., */ signalN);
@@ -357,6 +361,8 @@ anySignal(signal1, signal2, /* ..., */ signalN);
 
 ### timeoutSignal
 
+Creates a signal that aborts after a timeout. Also propagates abort from the parent signal.
+
 ```ts
 timeoutSignal(1000, signal);
 // => AbortSignal
@@ -364,9 +370,11 @@ timeoutSignal(1000, signal);
 
 ### withSignal
 
+Adapts a function to work with composed signals. Combines parent and internal signals into a single one.
+
 ```ts
 withSignal(fn, signal);
-// => Promise<T>
+// => (...args) => (parent?) => (own) => Promise<T>
 //
 // fn: (signal, ...args) => Promise<T>
 ```
