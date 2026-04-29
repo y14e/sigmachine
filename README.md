@@ -70,12 +70,12 @@ import { all, any, map, parallel, race, settled } from 'sigggnal';
 Runs tasks with limited concurrency. Resolves when all tasks succeed, or rejects on the first error.
 
 ```ts
-all(tasks, concurrency, signal?);
+all(tasks, concurrency, signal);
 // => Promise<T[]>
 //
 // tasks: ((signal) => Promise<T>)[]
 // concurrency: number
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### any
@@ -83,11 +83,11 @@ all(tasks, concurrency, signal?);
 Resolves with the first fulfilled result. Rejects if all tasks fail.
 
 ```ts
-any(tasks, signal?);
+any(tasks, signal);
 // => Promise<T>
 //
 // tasks: ((signal) => Promise<T>)[]
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### map
@@ -95,13 +95,13 @@ any(tasks, signal?);
 Maps items to async tasks with limited concurrency. Resolves with results in the same order as input.
 
 ```ts
-map(items, concurrency, fn, signal?);
+map(items, concurrency, fn, signal);
 // => Promise<R[]>
 //
 // items: T[]
 // concurrency: number
 // fn: (item, index, signal) => Promise<R>
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### parallel
@@ -109,12 +109,12 @@ map(items, concurrency, fn, signal?);
 Runs tasks in parallel with optional concurrency control. Resolves with all fulfilled results (errors are ignored).
 
 ```ts
-parallel(tasks, concurrency, signal?);
+parallel(tasks, concurrency, signal);
 // => Promise<T[]>
 //
 // tasks: ((signal) => Promise<T>)[]
 // concurrency: number
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### race
@@ -122,11 +122,11 @@ parallel(tasks, concurrency, signal?);
 Resolves or rejects as soon as one task settles. Cancels all remaining tasks.
 
 ```ts
-race(tasks, signal?);
+race(tasks, signal);
 // => Promise<T>
 //
 // tasks: ((signal) => Promise<T>)[]
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### settled
@@ -134,12 +134,12 @@ race(tasks, signal?);
 Runs all tasks and collects their results. Always resolves with the outcome of each task.
 
 ```ts
-settled(tasks, concurrency, signal?);
+settled(tasks, concurrency, signal);
 // => Promise<T[]>
 //
 // tasks: ((signal) => Promise<T>)[]
 // concurrency: number
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ---
@@ -201,35 +201,40 @@ retry(fn, options, signal);
 // => Promise<T>
 //
 // fn: (signal) => Promise<T>
-// options: RetryOptions
+// options (optional): RetryOptions
+// signal (optional): AbortSignal
 ```
 
-#### RetryOptions
+#### 🪄 Options
 
 ```ts
-{
-  maxRetries?: number;        // Safety cap (default: 10)
-  initialDelay?: number;      // Initial delay in ms (default: 1000)
-  maxDelay?: number;          // Maximum delay in ms (default: Infinity)
-  backoffMultiplier?: number; // Backoff multiplier (default: 2)
-  jitterFactor?: number;      // Jitter factor (0–1) (default: 0)
-  shouldStop?: (context: RetryContext) => boolean;
-  shouldRetryResult?: (result: unknown) => boolean;
-  onRetry?: (context: RetryContext) => void;
-}
-```
+interface RetryOptions<T = unknown> {
+  backoffMultiplier?: number; // (default: 2)
+  initialDelay?: number;      // ms (default: 1000)
+  jitterFactor?: number;      // 0-1 (default: 0)
+  maxDelay?: number;          // ms (default: Infinity)
+  maxRetries?: number;        // (default: 10)
 
-#### RetryContext
-
-```ts
-{
-  attempt: number;     // Current attempt (0-based)
-  status: string;      // 'fulfilled' or 'rejected'
-  error?: unknown;     // Error from previous attempt
-  result?: unknown;    // Result if retry triggered by result
-  elapsedTime: number; // Total elapsed time in ms
-  delay: number;       // Next delay in ms
+  onRetry?: (context: RetryContext<T>) => void;
+  shouldRetryResult?: (result: T) => boolean;
+  shouldStop?: (context: RetryContext<T>) => boolean;
 }
+
+type RetryContext<T = unknown> =
+  | {
+      attempt: number;        // 0-based
+      delay: number;          // ms
+      elapsedTime: number;    // ms
+      result: T;              // Result if retry triggered by result
+      status: 'fulfilled';
+    }
+  | {
+      attempt: number;
+      delay: number;
+      elapsedTime: number;
+      error: unknown;         // Error from previous attempt
+      status: 'rejected';
+  };
 ```
 
 <details>
@@ -358,11 +363,11 @@ import { abortable, anySignal, timeoutSignal, withSignal } from 'sigggnal';
 Wraps a promise to make it abortable. Rejects if the signal is aborted.
 
 ```ts
-abortable(promise, signal?);
+abortable(promise, signal);
 // => Promise<T>
 //
 // promise: Promise<T>
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### anySignal
@@ -381,11 +386,11 @@ anySignal(...signals);
 Creates a signal that aborts after a timeout. Also propagates abort from the parent signal.
 
 ```ts
-timeoutSignal(timeout, signal?);
+timeoutSignal(timeout, signal);
 // => AbortSignal
 //
 // timeout: number (ms)
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ### withSignal
@@ -412,11 +417,11 @@ import { sleep, timeout } from 'sigggnal';
 ### sleep (wait)
 
 ```ts
-sleep(timeout, signal?);
+sleep(timeout, signal);
 // => Promise<void>
 //
 // timeout: number (ms)
-// signal: AbortSignal
+// signal (optional): AbortSignal
 
 // Alias
 wait(1000, signal);
@@ -425,12 +430,12 @@ wait(1000, signal);
 ### timeout
 
 ```ts
-timeout(timeout, fn, signal?);
+timeout(timeout, fn, signal);
 // => Promise<T>
 //
 // timeout: number (ms)
 // fn: (signal) => Promise<T>
-// signal: AbortSignal
+// signal (optional): AbortSignal
 ```
 
 ---
