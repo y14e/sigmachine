@@ -106,7 +106,7 @@ parallel(tasks, 3, signal);
 #### race
 
 ```ts
-race(tasks, 3, signal);
+race(tasks, signal);
 // => Promise<T>
 //
 // tasks: (signal) => Promise<T>[]
