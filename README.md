@@ -176,20 +176,10 @@ retry(fn, options, signal);
 // options: RetryOptions
 ```
 
-```ts
-const result = await retry(async (signal) => {
-  const res = await fetch('/api', { signal });
-  return res.json();
-}, {
-  maxRetries: 5,
-  minTimeout: 500,
-}, signal);
-```
-
 #### RetryOptions
 
 ```ts
-interface RetryOptions {
+{
   maxRetries?: number;        // Safety cap (default: 10)
   initialDelay?: number;      // Initial delay in ms (default: 1000)
   maxDelay?: number;          // Maximum delay in ms (default: Infinity)
@@ -204,7 +194,7 @@ interface RetryOptions {
 #### RetryContext
 
 ```ts
-interface RetryContext {
+{
   attempt: number;     // Current attempt (0-based)
   status: string;      // 'fulfilled' or 'rejected'
   error?: unknown;     // Error from previous attempt
@@ -213,11 +203,6 @@ interface RetryContext {
   delay: number;       // Next delay in ms
 }
 ```
-
-Retry behavior is controlled by `shouldStop(context)`.
-
-* `true` → stop immediately
-* `false` → continue retrying
 
 <details>
 <summary>Retry details</summary>
